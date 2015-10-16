@@ -1,6 +1,7 @@
 package com.example.guo7711.popularmovieapp;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ public class PosterFragment extends Fragment {
             new Movie("http://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg")
     };
 
-    public PosterFragment(){
+    public PosterFragment() {
 
     }
 
@@ -37,5 +38,23 @@ public class PosterFragment extends Fragment {
         gridView.setAdapter(movieAdapter);
 
         return rootView;
+    }
+
+    public class FetchMovieTask extends AsyncTask<String, Void, String[]> {
+
+        @Override
+        protected String[] doInBackground(String... params) {
+            return new String[0];
+        }
+
+        @Override
+        protected void onPostExecute(String[] strings) {
+            super.onPostExecute(strings);
+        }
+
+        private String[] getDataFromJson(String movieJsonStr)
+        {
+            return new String[0];
+        }
     }
 }

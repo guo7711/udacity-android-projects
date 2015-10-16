@@ -44,6 +44,7 @@ public class PosterFragment extends Fragment {
 
         @Override
         protected String[] doInBackground(String... params) {
+            //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=2851e6750aef05c0da1c13d82f597926
             return new String[0];
         }
 

@@ -6,9 +6,11 @@ package com.example.guo7711.popularmovieapp;
 public class Movie {
 
     String posterURL;
+    String id;
+    String title;
 
-    public Movie(String url){
-        posterURL = url;
+    public Movie(String id){
+        this.id = id;
     }
 
 }

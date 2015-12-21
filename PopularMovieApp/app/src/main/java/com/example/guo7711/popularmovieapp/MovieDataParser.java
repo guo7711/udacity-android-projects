@@ -1,7 +1,5 @@
 package com.example.guo7711.popularmovieapp;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +44,7 @@ public class MovieDataParser {
                 movieObj.posterURL = posterpath;
 
                 movieArray.add(movieObj);
-                Log.d("PosterURL", posterpath);
+                //Log.d("PosterURL", posterpath);
             }
 
 
@@ -56,7 +54,6 @@ public class MovieDataParser {
             e.printStackTrace();
         }
 
-        //Log.e("Movies", String.valueOf(movieArray.size()));
         return movieArray;
     }
 

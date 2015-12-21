@@ -25,7 +25,6 @@ public class MovieAdapter extends BaseAdapter {
     public void setMovies(ArrayList<Movie> result)
     {
         movies = result;
-
     }
 
     public MovieAdapter(Context c, ArrayList<Movie> list) {
@@ -43,7 +42,7 @@ public class MovieAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     // create a new ImageView for each item referenced by the Adapter
@@ -60,22 +59,12 @@ public class MovieAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
 
-       // MovieFragment.FetchMovieTask.execute();
-
-        getImageURLs("popularity.desc");
-
-        if (position<=1)
         Picasso.with(mContext).load(movies.get(position).posterURL).into(imageView);
         return imageView;
 
 
     }
 
-    public void getImageURLs(String sort_by) {
-        MovieFragment.FetchMovieTask task = new MovieFragment().new FetchMovieTask();
-        task.execute(sort_by);
-
-    }
 
 
 }

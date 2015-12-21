@@ -45,10 +45,6 @@ public class MovieFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        movieAdapter = new MovieAdapter(getActivity(), movies);
-        FetchMovieTask movieTask = new FetchMovieTask();
-        movieTask.execute("popularity.desc");
-
     }
 
     @Override
@@ -65,6 +61,10 @@ public class MovieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+        movieAdapter = new MovieAdapter(getActivity(), movies);
+        FetchMovieTask movieTask = new FetchMovieTask();
+        movieTask.execute("popularity.desc");
 
         /*Movie test = new Movie("102899");
         test.posterURL = "http://image.tmdb.org/t/p/w185//kvXLZqY0Ngl1XSw7EaMQO0C1CCj.jpg";
@@ -89,11 +89,6 @@ public class MovieFragment extends Fragment {
             });
         }
 
-        //movieAdapter.getImageURLs("popularity.desc");
-        //Log.e("MovieAdapter", String.valueOf(movieAdapter));
-        //Log.e("MovieSize", String.valueOf(movies.size()));
-        // Get a reference to the ListView, and attach this adapter to it.
-
 
         return rootView;
     }
@@ -115,6 +110,8 @@ public class MovieFragment extends Fragment {
                 // Construct the URL for the OpenWeatherMap query
                 // Possible parameters are avaiable at OWM's forecast API page, at
                 // http://openweathermap.org/API#forecast
+                //
+                //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
                 URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=2851e6750aef05c0da1c13d82f597926");
 
                 // Create the request to OpenWeatherMap, and open the connection
@@ -172,7 +169,6 @@ public class MovieFragment extends Fragment {
 
             if (result != null) {
                 movieAdapter.setMovies(result);
-                Log.e("onPostExecute",String.valueOf(result.size()));
                 movieAdapter.notifyDataSetChanged();
             }
             movies = result;

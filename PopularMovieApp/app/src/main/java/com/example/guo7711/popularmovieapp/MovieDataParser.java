@@ -11,6 +11,12 @@ import java.util.ArrayList;
  */
 public class MovieDataParser {
 
+
+    public static Movie getMovieByID(String ID)
+    {
+        return new Movie("fake ID from MovieDataParser.getMovieByID");
+    }
+
     public static String[] getPosterPaths(String movieJsonStr)throws JSONException{
         JSONArray movies = new JSONObject(movieJsonStr).getJSONArray("results");
         ArrayList<String> posters = new ArrayList<String>();

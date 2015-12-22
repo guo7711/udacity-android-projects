@@ -9,6 +9,11 @@ public class Movie {
     String id;
     String title;
 
+    public Movie()
+    {
+        this.id = "default";
+    }
+
     public Movie(String id){
         this.id = id;
     }

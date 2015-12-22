@@ -1,18 +1,14 @@
 package com.example.guo7711.popularmovieapp;
 
-import android.app.Fragment;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,91 +16,54 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
- * Created by guo7711 on 10/15/2015.
+ * A placeholder fragment containing a simple view.
  */
-public class MovieFragment extends Fragment {
+public class DetailActivityFragment extends Fragment {
 
-    private MovieAdapter movieAdapter;
+    Movie selectedMovie = new Movie();
 
-    ArrayList<Movie> movies = new ArrayList<>();
-
-    public MovieFragment() {
-
-    }
-
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+    public DetailActivityFragment() {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings)
-        {
-           Intent intent = new Intent(getActivity(), SettingsActivity.class);
-            startActivity(intent);
-        }
-        return super.onOptionsItemSelected(item);
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-    private void updateMovies(){
-        FetchMovieTask movieTask = new FetchMovieTask();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String order_by = prefs.getString(getString(R.string.pref_order_key), "popularity.desc");
-        movieTask.execute(order_by);
-    }
+        View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        Intent intent = getActivity().getIntent();
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies();
-    }
+        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
+            String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            FetchMovieTask fetchMovieTask = new FetchMovieTask();
+            fetchMovieTask.execute(selectedMovieID);
 
-        movieAdapter = new MovieAdapter(getActivity(), movies);
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            selectedMovie = new Movie();
 
-        if (movies != null)
-        {
-            GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
-            gridView.setAdapter(movieAdapter);
+            if (selectedMovie != null) {
+                Log.e("onCreateView", selectedMovie.id);
+                ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.id);
+            }
 
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v,
-                                        int position, long id) {
-                   // Toast.makeText(getActivity(), "" + position,
-                     //       Toast.LENGTH_SHORT).show();
-                    String selectedMovieID = (movies.get(position)).id;
-                    Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, selectedMovieID);
-                    startActivity(intent);
-
-                }
-            });
         }
 
         return rootView;
+
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
-
+    public class FetchMovieTask extends AsyncTask<String, Void, Movie> {
         @Override
-        protected ArrayList<Movie> doInBackground(String... params) {
+        protected Movie doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
             String responseJsonStr = null;
-            String order_by = params[0];
+
+            String movieID = params[0];
 
             try {
                 // Construct the URL for the OpenWeatherMap query
@@ -112,7 +71,7 @@ public class MovieFragment extends Fragment {
                 // http://openweathermap.org/API#forecast
                 //
                 //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+ order_by + "&api_key=2851e6750aef05c0da1c13d82f597926");
+                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=2851e6750aef05c0da1c13d82f597926");
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -142,7 +101,8 @@ public class MovieFragment extends Fragment {
                 }
                 responseJsonStr = buffer.toString();
 
-                movies =  MovieDataParser.getMovies(responseJsonStr);
+                selectedMovie =  MovieDataParser.getMovieByID(movieID);
+                Log.e("DoInBackground", selectedMovie.id);
 
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
@@ -161,20 +121,19 @@ public class MovieFragment extends Fragment {
                     }
                 }
             }
-            return movies;
+
+            return selectedMovie;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Movie> result) {
+        protected void onPostExecute(Movie result) {
 
             if (result != null) {
-                movieAdapter.setMovies(result);
-                movieAdapter.notifyDataSetChanged();
+                selectedMovie = result;
+                Log.e("onPostExecute - result", selectedMovie.id);
             }
-            movies = result;
             super.onPostExecute(result);
         }
-
-
     }
 }
+

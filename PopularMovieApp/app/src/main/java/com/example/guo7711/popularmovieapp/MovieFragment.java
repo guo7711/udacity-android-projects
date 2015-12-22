@@ -1,6 +1,7 @@
 package com.example.guo7711.popularmovieapp;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -35,8 +36,6 @@ public class MovieFragment extends Fragment {
 
     }
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,18 +53,6 @@ public class MovieFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateMovies(){
-        FetchMovieTask movieTask = new FetchMovieTask();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String order_by = prefs.getString(getString(R.string.pref_order_key), "popularity.desc");
-        movieTask.execute(order_by);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateMovies();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,28 +60,26 @@ public class MovieFragment extends Fragment {
         movieAdapter = new MovieAdapter(getActivity(), movies);
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        if (movies != null)
-        {
-            GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
-            gridView.setAdapter(movieAdapter);
+        FetchPosterTask movieTask = new FetchPosterTask(getActivity(), rootView);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String order_by = prefs.getString(getString(R.string.pref_order_key), "popularity.desc");
+        movieTask.execute(order_by);
 
-            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                public void onItemClick(AdapterView<?> parent, View v,
-                                        int position, long id) {
-                   // Toast.makeText(getActivity(), "" + position,
-                     //       Toast.LENGTH_SHORT).show();
-                    String selectedMovieID = (movies.get(position)).id;
-                    Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, selectedMovieID);
-                    startActivity(intent);
-
-                }
-            });
-        }
+        Log.e("onCreateView", "MovieFragment");
 
         return rootView;
     }
 
-    public class FetchMovieTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+    public class FetchPosterTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+
+        private Context mContext;
+        private View rootView;
+
+        public FetchPosterTask(Context context, View rootView){
+            this.mContext=context;
+            this.rootView=rootView;
+        }
+
 
         @Override
         protected ArrayList<Movie> doInBackground(String... params) {
@@ -142,10 +127,12 @@ public class MovieFragment extends Fragment {
                 }
                 responseJsonStr = buffer.toString();
 
+                Log.e("Doinbackground", responseJsonStr);
+
                 movies =  MovieDataParser.getMovies(responseJsonStr);
 
             } catch (IOException e) {
-                Log.e("MovieFragment", "Error ", e);
+                Log.e("MovieFragment", "Error " + e.getMessage());
                 // If the code didn't successfully get the movie data, there's no point in attemping
                 // to parse it.
                 return null;
@@ -170,8 +157,31 @@ public class MovieFragment extends Fragment {
             if (result != null) {
                 movieAdapter.setMovies(result);
                 movieAdapter.notifyDataSetChanged();
+                movies = result;
             }
-            movies = result;
+
+
+            if (movies != null)
+            {
+                GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
+                gridView.setAdapter(movieAdapter);
+
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+                        // Toast.makeText(getActivity(), "" + position,
+                        //       Toast.LENGTH_SHORT).show();
+                        String selectedMovieID = (movies.get(position)).id;
+                        Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, selectedMovieID);
+                        startActivity(intent);
+
+                    }
+                });
+
+                Log.e("onPostExecute", String.valueOf(movies.size()));
+            }
+
+
             super.onPostExecute(result);
         }
 

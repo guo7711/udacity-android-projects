@@ -14,6 +14,9 @@ public class MovieDataParser {
 
     public static Movie getMovieByID(String ID)
     {
+        Movie m = new Movie(ID);
+
+
         return new Movie("fake ID from MovieDataParser.getMovieByID");
     }
 

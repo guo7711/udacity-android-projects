@@ -12,9 +12,28 @@ import java.util.ArrayList;
 public class MovieDataParser {
 
 
-    public static Movie getMovieByID(String ID)
+    public static Movie getMovieByID(String ID, String movieJsonStr)
     {
-        return new Movie("fake ID from MovieDataParser.getMovieByID");
+        Movie m = new Movie(ID);
+        try {
+            JSONObject onemovie = new JSONObject(movieJsonStr);
+            String posterpath = onemovie.getString("poster_path");
+            m.posterURL = posterpath;
+            String releasedate = onemovie.getString("release_date");
+            m.release_date = releasedate;
+            String title = onemovie.getString("title");
+            m.title = title;
+            double vote = onemovie.getDouble("vote_average");
+            m.vote_average = vote;
+            String overview = onemovie.getString("overview");
+            m.overview = overview;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        return m;
     }
 
     public static String[] getPosterPaths(String movieJsonStr)throws JSONException{

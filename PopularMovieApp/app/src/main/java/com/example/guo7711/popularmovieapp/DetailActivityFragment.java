@@ -1,5 +1,6 @@
 package com.example.guo7711.popularmovieapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -28,25 +29,29 @@ public class DetailActivityFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+        //Log.e("onCreate", "DetailActivityFragment Started");
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         Intent intent = getActivity().getIntent();
 
+        //Log.e("onCreateView", "DetailActivityFragment Started");
+
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
 
             selectedMovie = new Movie();
-            FetchMovieTask fetchMovieTask = new FetchMovieTask();
+            FetchMovieTask fetchMovieTask = new FetchMovieTask(getActivity(), rootView);
             fetchMovieTask.execute(selectedMovieID);
 
-
-
-            if (selectedMovie != null) {
-                Log.e("onCreateView", selectedMovie.id);
-                ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.id);
-            }
+            //Log.e("onCreateView", selectedMovie.id);
 
         }
 
@@ -55,6 +60,15 @@ public class DetailActivityFragment extends Fragment {
     }
 
     public class FetchMovieTask extends AsyncTask<String, Void, Movie> {
+
+        private Context mContext;
+        private View rootView;
+
+        public FetchMovieTask(Context context, View rootView){
+            this.mContext=context;
+            this.rootView=rootView;
+        }
+
         @Override
         protected Movie doInBackground(String... params) {
 
@@ -72,7 +86,7 @@ public class DetailActivityFragment extends Fragment {
                 // http://openweathermap.org/API#forecast
                 //
                 //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=2851e6750aef05c0da1c13d82f597926");
+                URL url = new URL("http://api.themoviedb.org/3/movie/"+movieID+"?api_key=2851e6750aef05c0da1c13d82f597926");
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -101,9 +115,10 @@ public class DetailActivityFragment extends Fragment {
                     return null;
                 }
                 responseJsonStr = buffer.toString();
+                //Log.e("DoInBackground", responseJsonStr);
 
-                selectedMovie =  MovieDataParser.getMovieByID(movieID);
-                Log.e("DoInBackground", selectedMovie.id);
+                selectedMovie =  MovieDataParser.getMovieByID(movieID, responseJsonStr);
+
 
             } catch (IOException e) {
                 Log.e("MovieFragment", "Error ", e);
@@ -131,9 +146,12 @@ public class DetailActivityFragment extends Fragment {
 
             if (result != null) {
                 selectedMovie = result;
-                Log.e("onPostExecute - result", selectedMovie.id);
+                if (selectedMovie != null) {
+                    ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.id);
+                }
             }
             super.onPostExecute(result);
+
         }
     }
 }

@@ -8,6 +8,10 @@ public class Movie {
     String posterURL;
     String id;
     String title;
+    String release_date;
+    double vote_average;
+    String overview;
+
 
     public Movie()
     {

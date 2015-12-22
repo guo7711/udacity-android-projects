@@ -37,10 +37,11 @@ public class DetailActivityFragment extends Fragment {
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
 
+            selectedMovie = new Movie();
             FetchMovieTask fetchMovieTask = new FetchMovieTask();
             fetchMovieTask.execute(selectedMovieID);
 
-            selectedMovie = new Movie();
+
 
             if (selectedMovie != null) {
                 Log.e("onCreateView", selectedMovie.id);

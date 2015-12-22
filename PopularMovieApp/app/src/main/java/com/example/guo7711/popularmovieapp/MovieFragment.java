@@ -73,7 +73,7 @@ public class MovieFragment extends Fragment {
         movieAdapter = new MovieAdapter(getActivity(), movies);
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        Log.e("onCreateView", "MovieFragment");
+        //Log.e("onCreateView", "MovieFragment");
 
         return rootView;
     }

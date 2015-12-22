@@ -23,7 +23,7 @@ import java.net.URL;
  */
 public class DetailActivityFragment extends Fragment {
 
-    Movie selectedMovie = new Movie();
+    Movie selectedMovie;
 
     public DetailActivityFragment() {
     }
@@ -32,7 +32,7 @@ public class DetailActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        //Log.e("onCreate", "DetailActivityFragment Started");
+        Log.e("onCreate", "DetailActivityFragment Started");
     }
 
     @Override
@@ -42,7 +42,7 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         Intent intent = getActivity().getIntent();
 
-        //Log.e("onCreateView", "DetailActivityFragment Started");
+        Log.e("onCreateView", "DetailActivityFragment Started");
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -51,7 +51,7 @@ public class DetailActivityFragment extends Fragment {
             FetchMovieTask fetchMovieTask = new FetchMovieTask(getActivity(), rootView);
             fetchMovieTask.execute(selectedMovieID);
 
-            //Log.e("onCreateView", selectedMovie.id);
+            Log.e("onCreateView", selectedMovie.id);
 
         }
 
@@ -118,6 +118,7 @@ public class DetailActivityFragment extends Fragment {
                 //Log.e("DoInBackground", responseJsonStr);
 
                 selectedMovie =  MovieDataParser.getMovieByID(movieID, responseJsonStr);
+                Log.e("DoInBackgroung", selectedMovie.id);
 
 
             } catch (IOException e) {

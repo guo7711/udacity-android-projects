@@ -1,5 +1,7 @@
 package com.example.guo7711.popularmovieapp;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,7 +34,7 @@ public class MovieDataParser {
             e.printStackTrace();
         }
 
-
+        Log.e("getMovieByID", m.title);
         return m;
     }
 

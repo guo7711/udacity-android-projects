@@ -180,7 +180,7 @@ public class MovieFragment extends Fragment {
                         // Toast.makeText(getActivity(), "" + position,
                         //       Toast.LENGTH_SHORT).show();
                         String selectedMovieID = (movies.get(position)).id;
-                        Intent intent = new Intent(getActivity(), TestActivity.class).putExtra(Intent.EXTRA_TEXT, selectedMovieID);
+                        Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, selectedMovieID);
                         startActivity(intent);
 
                     }

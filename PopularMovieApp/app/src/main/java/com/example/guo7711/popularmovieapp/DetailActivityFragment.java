@@ -35,7 +35,7 @@ public class DetailActivityFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        Log.e("onCreate", "DetailActivityFragment Started");
+
     }
 
     @Override
@@ -45,7 +45,7 @@ public class DetailActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
         Intent intent = getActivity().getIntent();
 
-        Log.e("onCreateView", "DetailActivityFragment Started");
+
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -118,10 +118,9 @@ public class DetailActivityFragment extends Fragment {
                     return null;
                 }
                 responseJsonStr = buffer.toString();
-                //Log.e("DoInBackground", responseJsonStr);
 
                 selectedMovie =  MovieDataParser.getMovieByID(movieID, responseJsonStr);
-                Log.e("DoInBackgroung", selectedMovie.overview);
+
 
 
             } catch (IOException e) {
@@ -152,14 +151,11 @@ public class DetailActivityFragment extends Fragment {
                 selectedMovie = result;
                 if (selectedMovie != null) {
                     ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.title);
-
-                    ((TextView) getView().findViewById(R.id.releasedateText)).setText(selectedMovie.release_date);
+                    ((TextView) rootView.findViewById(R.id.releasedateText)).setText(selectedMovie.release_date);
                     ((TextView) rootView.findViewById(R.id.voteText)).setText(String.valueOf(selectedMovie.vote_average));
                     ((TextView) rootView.findViewById(R.id.overViewText)).setText(selectedMovie.overview);
-                    ImageView posterImageView = ((ImageView) rootView.findViewById(R.id.imageView));
-
-
-                    Picasso.with(mContext).load(selectedMovie.posterURL).into(posterImageView);
+                    ImageView imageView = ((ImageView) rootView.findViewById(R.id.imageView));
+                    Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185/"+ selectedMovie.posterURL).into(imageView);
                 }
             }
             super.onPostExecute(result);
@@ -167,4 +163,3 @@ public class DetailActivityFragment extends Fragment {
         }
     }
 }
-

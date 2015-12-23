@@ -9,7 +9,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,7 +26,7 @@ import java.net.URL;
  */
 public class DetailActivityFragment extends Fragment {
 
-    Movie selectedMovie;
+    Movie selectedMovie = new Movie();
 
     public DetailActivityFragment() {
     }
@@ -47,11 +50,11 @@ public class DetailActivityFragment extends Fragment {
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
 
-            selectedMovie = new Movie();
+
             FetchMovieTask fetchMovieTask = new FetchMovieTask(getActivity(), rootView);
             fetchMovieTask.execute(selectedMovieID);
 
-            Log.e("onCreateView", selectedMovie.id);
+            //Log.e("onCreateView", selectedMovie.id);
 
         }
 
@@ -118,7 +121,7 @@ public class DetailActivityFragment extends Fragment {
                 //Log.e("DoInBackground", responseJsonStr);
 
                 selectedMovie =  MovieDataParser.getMovieByID(movieID, responseJsonStr);
-                Log.e("DoInBackgroung", selectedMovie.id);
+                Log.e("DoInBackgroung", selectedMovie.overview);
 
 
             } catch (IOException e) {
@@ -148,7 +151,15 @@ public class DetailActivityFragment extends Fragment {
             if (result != null) {
                 selectedMovie = result;
                 if (selectedMovie != null) {
-                    ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.id);
+                    ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.title);
+
+                    ((TextView) getView().findViewById(R.id.releasedateText)).setText(selectedMovie.release_date);
+                    ((TextView) rootView.findViewById(R.id.voteText)).setText(String.valueOf(selectedMovie.vote_average));
+                    ((TextView) rootView.findViewById(R.id.overViewText)).setText(selectedMovie.overview);
+                    ImageView posterImageView = ((ImageView) rootView.findViewById(R.id.imageView));
+
+
+                    Picasso.with(mContext).load(selectedMovie.posterURL).into(posterImageView);
                 }
             }
             super.onPostExecute(result);

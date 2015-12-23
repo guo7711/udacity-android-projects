@@ -1,19 +1,18 @@
 package com.example.guo7711.popularmovieapp;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,83 +20,68 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 /**
- * Created by guo7711 on 10/15/2015.
+ * A placeholder fragment containing a simple view.
  */
-public class MovieFragment extends Fragment {
+public class TestActivityFragment extends Fragment {
 
-    private MovieAdapter movieAdapter;
-    private View rootView;
-    ArrayList<Movie> movies = new ArrayList<>();
+    Movie selectedMovie = new Movie();
 
-    public MovieFragment() {
-
+    public TestActivityFragment() {
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        Log.e("onCreate", "TestActivityFragment Started");
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings)
-        {
-           Intent intent = new Intent(getActivity(), SettingsActivity.class);
-            startActivity(intent);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.fragment_test, container, false);
+        Intent intent = getActivity().getIntent();
+
+        Log.e("onCreateView", "DetailActivityFragment Started");
+
+        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
+            String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
+
+
+            FetchMovieTask fetchMovieTask = new FetchMovieTask(getActivity(), rootView);
+            fetchMovieTask.execute(selectedMovieID);
+
+            //Log.e("onCreateView", selectedMovie.id);
+
         }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onStart() {
-
-        updateMovies(rootView);
-        super.onStart();
-    }
-
-    public void updateMovies(View rootView){
-        FetchPosterTask movieTask = new FetchPosterTask(getActivity(), rootView);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String order_by = prefs.getString(getString(R.string.pref_order_key), "popularity.desc");
-        movieTask.execute(order_by);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        movieAdapter = new MovieAdapter(getActivity(), movies);
-        rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-        //Log.e("onCreateView", "MovieFragment");
 
         return rootView;
+
     }
 
-    public class FetchPosterTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+    public class FetchMovieTask extends AsyncTask<String, Void, Movie> {
 
         private Context mContext;
         private View rootView;
 
-        public FetchPosterTask(Context context, View rootView){
+        public FetchMovieTask(Context context, View rootView){
             this.mContext=context;
             this.rootView=rootView;
         }
 
-
         @Override
-        protected ArrayList<Movie> doInBackground(String... params) {
+        protected Movie doInBackground(String... params) {
 
             HttpURLConnection urlConnection = null;
             BufferedReader reader = null;
 
             // Will contain the raw JSON response as a string.
             String responseJsonStr = null;
-            String order_by = params[0];
+
+            String movieID = params[0];
 
             try {
                 // Construct the URL for the OpenWeatherMap query
@@ -105,7 +89,7 @@ public class MovieFragment extends Fragment {
                 // http://openweathermap.org/API#forecast
                 //
                 //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+ order_by + "&api_key=2851e6750aef05c0da1c13d82f597926");
+                URL url = new URL("http://api.themoviedb.org/3/movie/"+movieID+"?api_key=2851e6750aef05c0da1c13d82f597926");
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -134,13 +118,14 @@ public class MovieFragment extends Fragment {
                     return null;
                 }
                 responseJsonStr = buffer.toString();
+                //Log.e("DoInBackground", responseJsonStr);
 
-                //Log.e("Doinbackground", responseJsonStr);
+                selectedMovie =  MovieDataParser.getMovieByID(movieID, responseJsonStr);
+                Log.e("DoInBackgroung", selectedMovie.overview);
 
-                movies =  MovieDataParser.getMovies(responseJsonStr);
 
             } catch (IOException e) {
-                Log.e("MovieFragment", "Error " + e.getMessage());
+                Log.e("MovieFragment", "Error ", e);
                 // If the code didn't successfully get the movie data, there's no point in attemping
                 // to parse it.
                 return null;
@@ -156,43 +141,27 @@ public class MovieFragment extends Fragment {
                     }
                 }
             }
-            return movies;
+
+            return selectedMovie;
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Movie> result) {
+        protected void onPostExecute(Movie result) {
 
             if (result != null) {
-                movieAdapter.setMovies(result);
-                movieAdapter.notifyDataSetChanged();
-                movies = result;
+                selectedMovie = result;
+                if (selectedMovie != null) {
+                    ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.title);
+                    ((TextView) rootView.findViewById(R.id.releasedateText)).setText(selectedMovie.release_date);
+                    ((TextView) rootView.findViewById(R.id.voteText)).setText(String.valueOf(selectedMovie.vote_average));
+                    ((TextView) rootView.findViewById(R.id.overViewText)).setText(selectedMovie.overview);
+
+                    ImageView imageView = ((ImageView) rootView.findViewById(R.id.imageView));
+                    Picasso.with(mContext).load("http://image.tmdb.org/t/p/w185/"+ selectedMovie.posterURL).into(imageView);
+                }
             }
-
-
-            if (movies != null)
-            {
-                GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
-                gridView.setAdapter(movieAdapter);
-
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View v,
-                                            int position, long id) {
-                        // Toast.makeText(getActivity(), "" + position,
-                        //       Toast.LENGTH_SHORT).show();
-                        String selectedMovieID = (movies.get(position)).id;
-                        Intent intent = new Intent(getActivity(), TestActivity.class).putExtra(Intent.EXTRA_TEXT, selectedMovieID);
-                        startActivity(intent);
-
-                    }
-                });
-
-                //Log.e("onPostExecute", String.valueOf(movies.size()));
-            }
-
-
             super.onPostExecute(result);
+
         }
-
-
     }
 }

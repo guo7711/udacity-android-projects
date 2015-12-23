@@ -105,7 +105,7 @@ public class MovieFragment extends Fragment {
                 // http://openweathermap.org/API#forecast
                 //
                 //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+ order_by + "&api_key=2851e6750aef05c0da1c13d82f597926");
+                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+ order_by + "&api_key=[YOUR API KEY]");
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();

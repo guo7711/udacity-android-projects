@@ -4,11 +4,13 @@
     <string-array name="pref_order_options">
                 <item>@string/pref_order_label_popularity</item>
                 <item>@string/pref_order_label_rate</item>
+                <item>@string/pref_order_label_favourite</item>
             </string-array>
 
         <string-array name="pref_order_values">
             <item>@string/pref_order_popularity</item>
             <item>@string/pref_order_rate</item>
+            <item>@string/pref_order_favourite</item>
         </string-array>
 
 

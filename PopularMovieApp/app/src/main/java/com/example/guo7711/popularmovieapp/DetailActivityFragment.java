@@ -71,7 +71,7 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.e("OnCreateView", "OnCreateView");
+        //Log.e("OnCreateView", "OnCreateView");
 
         reviewTrailerAdapter = new ReviewTrailerAdapter(getActivity(), selectedMovie.reviews);
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
@@ -94,12 +94,12 @@ public class DetailActivityFragment extends Fragment {
             final Button button = (Button) rootView.findViewById(R.id.button);
 
             if (checkFavouriteByID(selectedMovieID)) {
-                Log.e("onCreateView", "TRUE");
+               // Log.e("onCreateView", "TRUE");
                 button.setText("Unmark as favourite");
             }
             else
             {
-                Log.e("onCreateView", "FALSE");
+                //Log.e("onCreateView", "FALSE");
                 button.setText("Mark as favourite");
             }
 
@@ -256,7 +256,6 @@ public class DetailActivityFragment extends Fragment {
             // Log.e("FetchReviewTask", String.valueOf(selectedMovie.reviews.size()));
         }
     }
-
 
     public class FetchReviewTask extends AsyncTask<String, Void, ArrayList<String>> {
         private Context mContext;

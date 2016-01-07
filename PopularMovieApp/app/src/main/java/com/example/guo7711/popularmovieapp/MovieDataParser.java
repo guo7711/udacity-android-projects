@@ -18,7 +18,7 @@ public class MovieDataParser {
         try {
             JSONObject onemovie = new JSONObject(movieJsonStr);
             String posterpath = onemovie.getString("poster_path");
-            m.posterURL = posterpath;
+            m.posterURL = "http://image.tmdb.org/t/p/w185/" + posterpath;
             String releasedate = onemovie.getString("release_date");
             m.release_date = releasedate;
             String title = onemovie.getString("title");

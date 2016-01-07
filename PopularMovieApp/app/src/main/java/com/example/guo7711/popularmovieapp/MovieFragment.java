@@ -22,6 +22,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by guo7711 on 10/15/2015.
@@ -100,63 +102,143 @@ public class MovieFragment extends Fragment {
             String responseJsonStr = null;
             String order_by = params[0];
 
-            try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are avaiable at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                //
-                //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
+            //Log.e("FetchPoster", params[0]);
 
+            if (order_by.equals("favourite")) {
 
+                movies = new ArrayList<>();
+                SharedPreferences sp = mContext.getSharedPreferences("pref_general", Context.MODE_PRIVATE);
+                Set<String> retrive_set = new HashSet<String>();
+                retrive_set = sp.getStringSet("favourite", null);
 
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+ order_by + "&api_key=" + getResources().getString(R.string.apikey));
+                String[] array = new String[retrive_set.size()];
+                retrive_set.toArray(array);
 
-                // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
+                for (int i = 0; i < array.length; i++) {
+                    Log.d("FetchPoster", array[i]);
                 }
 
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    return null;
-                }
-                responseJsonStr = buffer.toString();
-
-                //Log.e("Doinbackground", responseJsonStr);
-
-                movies =  MovieDataParser.getMovies(responseJsonStr);
-
-            } catch (IOException e) {
-                Log.e("MovieFragment", "Error " + e.getMessage());
-                // If the code didn't successfully get the movie data, there's no point in attemping
-                // to parse it.
-                return null;
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
+                for (int i = 0; i < array.length; i++) {
                     try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e("MovieFragment", "Error closing stream", e);
+                        // Construct the URL for the OpenWeatherMap query
+                        // Possible parameters are avaiable at OWM's forecast API page, at
+                        // http://openweathermap.org/API#forecast
+                        //
+                        //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
+
+
+                        URL url = new URL("http://api.themoviedb.org/3/movie/"+array[i]+"?api_key=" + getResources().getString(R.string.apikey));
+
+                        // Create the request to OpenWeatherMap, and open the connection
+                        urlConnection = (HttpURLConnection) url.openConnection();
+                        urlConnection.setRequestMethod("GET");
+                        urlConnection.connect();
+
+                        // Read the input stream into a String
+                        InputStream inputStream = urlConnection.getInputStream();
+                        StringBuffer buffer = new StringBuffer();
+                        if (inputStream == null) {
+                            // Nothing to do.
+                            return null;
+                        }
+                        reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                            // But it does make debugging a *lot* easier if you print out the completed
+                            // buffer for debugging.
+                            buffer.append(line + "\n");
+                        }
+
+                        if (buffer.length() == 0) {
+                            // Stream was empty.  No point in parsing.
+                            return null;
+                        }
+                        responseJsonStr = buffer.toString();
+
+                        //Log.e("Doinbackground", responseJsonStr);
+
+                        Movie m = MovieDataParser.getMovieByID(array[0], responseJsonStr);
+                        movies.add(m);
+
+                    } catch (IOException e) {
+                        Log.e("MovieFragment", "Error " + e.getMessage());
+                        // If the code didn't successfully get the movie data, there's no point in attemping
+                        // to parse it.
+                        return null;
+                    } finally {
+                        if (urlConnection != null) {
+                            urlConnection.disconnect();
+                        }
+                        if (reader != null) {
+                            try {
+                                reader.close();
+                            } catch (final IOException e) {
+                                Log.e("MovieFragment", "Error closing stream", e);
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                try {
+                    // Construct the URL for the OpenWeatherMap query
+                    // Possible parameters are avaiable at OWM's forecast API page, at
+                    // http://openweathermap.org/API#forecast
+                    //
+                    //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
+
+
+                    URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=" + order_by + "&api_key=" + getResources().getString(R.string.apikey));
+
+                    // Create the request to OpenWeatherMap, and open the connection
+                    urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setRequestMethod("GET");
+                    urlConnection.connect();
+
+                    // Read the input stream into a String
+                    InputStream inputStream = urlConnection.getInputStream();
+                    StringBuffer buffer = new StringBuffer();
+                    if (inputStream == null) {
+                        // Nothing to do.
+                        return null;
+                    }
+                    reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
+                        // But it does make debugging a *lot* easier if you print out the completed
+                        // buffer for debugging.
+                        buffer.append(line + "\n");
+                    }
+
+                    if (buffer.length() == 0) {
+                        // Stream was empty.  No point in parsing.
+                        return null;
+                    }
+                    responseJsonStr = buffer.toString();
+
+                    //Log.e("Doinbackground", responseJsonStr);
+
+                    movies = MovieDataParser.getMovies(responseJsonStr);
+
+                } catch (IOException e) {
+                    Log.e("MovieFragment", "Error " + e.getMessage());
+                    // If the code didn't successfully get the movie data, there's no point in attemping
+                    // to parse it.
+                    return null;
+                } finally {
+                    if (urlConnection != null) {
+                        urlConnection.disconnect();
+                    }
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (final IOException e) {
+                            Log.e("MovieFragment", "Error closing stream", e);
+                        }
                     }
                 }
             }
@@ -190,7 +272,7 @@ public class MovieFragment extends Fragment {
                     }
                 });
 
-                //Log.e("onPostExecute", String.valueOf(movies.size()));
+                Log.e("onPostExecute", String.valueOf(movies.size()));
             }
 
 

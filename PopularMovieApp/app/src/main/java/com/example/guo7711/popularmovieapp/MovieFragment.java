@@ -32,6 +32,7 @@ public class MovieFragment extends Fragment {
     private View rootView;
     ArrayList<Movie> movies = new ArrayList<>();
 
+
     public MovieFragment() {
 
     }
@@ -105,7 +106,10 @@ public class MovieFragment extends Fragment {
                 // http://openweathermap.org/API#forecast
                 //
                 //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
-                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+ order_by + "&api_key=[YOUR API KEY]");
+
+
+
+                URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by="+ order_by + "&api_key=" + getResources().getString(R.string.apikey));
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();

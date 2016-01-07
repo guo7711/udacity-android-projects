@@ -29,30 +29,91 @@
             android:id="@+id/titleText"
             android:textSize="20dp" />
 
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="350dp"
-            android:id="@+id/imageView" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Release date"
-            android:id="@+id/releasedateText" />
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="350dp"
+                android:id="@+id/imageView" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Vote Average"
-            android:id="@+id/voteText" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Overview"
-            android:id="@+id/overViewText" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Release date"
+                    android:id="@+id/releasedateText"
+                    android:textSize="20dp"
+                    android:textIsSelectable="true"
+                    android:layout_marginTop="20dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Vote Average"
+                    android:id="@+id/voteText" />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Mark as Favourite"
+                    android:id="@+id/button" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Overview"
+                android:id="@+id/overViewText" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/spliting_line"
+                android:src="@drawable/line_transparent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Trailers:"
+                android:id="@+id/trailerText"
+                android:textSize="20dp" />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/trailerList" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reviews:"
+                android:id="@+id/reviewText"
+                android:textIsSelectable="true"
+                android:textSize="20dp" />
+
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/reviewList" />
+        </LinearLayout>
 
     </LinearLayout>
 
     </ScrollView>
+
 </RelativeLayout>

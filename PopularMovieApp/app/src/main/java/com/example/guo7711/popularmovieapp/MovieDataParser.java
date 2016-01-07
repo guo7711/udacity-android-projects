@@ -36,6 +36,29 @@ public class MovieDataParser {
         return m;
     }
 
+    public static ArrayList<String> getReviewsByMovieID(String MovieID, String responseJsonStr){
+
+        ArrayList<String> reviews = new ArrayList<>();
+
+        //only get results in page 1
+        try {
+            JSONArray pageOneResults = new JSONObject(responseJsonStr).getJSONArray("results");
+
+            for (int i = 0; i < pageOneResults.length(); i++){
+                JSONObject onereviewcontent = pageOneResults.getJSONObject(i);
+                String onecontent = onereviewcontent.getString("content");
+                reviews.add(onecontent);
+            }
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return reviews;
+
+    }
+
     public static String[] getPosterPaths(String movieJsonStr)throws JSONException{
         JSONArray movies = new JSONObject(movieJsonStr).getJSONArray("results");
         ArrayList<String> posters = new ArrayList<String>();

@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -167,8 +167,13 @@ public class DetailActivityFragment extends Fragment {
 
 
             if (selectedMovie.reviews != null) {
-                ListView reviewListView = (ListView) rootView.findViewById(R.id.reviewList);
-                reviewListView.setAdapter(reviewAdapter);
+                //ListView reviewListView = (ListView) rootView.findViewById(R.id.reviewList);
+                //reviewListView.setAdapter(reviewAdapter);
+
+                LinearLayout reviewsLinearLayout = (LinearLayout) rootView.findViewById(R.id.reviewsLinearLayout);
+                for (int i = 0; i < selectedMovie.reviews.size(); i++) {
+                    reviewsLinearLayout.addView(reviewAdapter.createReview(i));
+                }
 
                 super.onPostExecute(result_reviews);
             }

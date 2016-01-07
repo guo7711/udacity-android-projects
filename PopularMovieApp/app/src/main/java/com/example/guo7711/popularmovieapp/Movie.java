@@ -15,7 +15,7 @@ public class Movie {
     String overview;
 
     ArrayList<String> reviews;
-    ArrayList<String> trailers;
+    ArrayList<Trailer> trailers;
 
 
 
@@ -23,11 +23,14 @@ public class Movie {
     {
         this.id = "default";
         reviews = new ArrayList<String>();
-        trailers = new ArrayList<String>();
+        trailers = new ArrayList<Trailer>();
     }
 
     public Movie(String id){
+
         this.id = id;
+        reviews = new ArrayList<String>();
+        trailers = new ArrayList<Trailer>();
     }
 
 }

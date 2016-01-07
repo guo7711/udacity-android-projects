@@ -10,4 +10,6 @@
             <item>@string/pref_order_popularity</item>
             <item>@string/pref_order_rate</item>
         </string-array>
+
+
 </resources>

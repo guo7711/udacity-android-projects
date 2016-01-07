@@ -93,10 +93,11 @@
                 android:id="@+id/trailerText"
                 android:textSize="20dp" />
 
-            <ListView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/trailerList" />
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/trailersLinearLayout"></LinearLayout>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -112,10 +113,6 @@
                 android:layout_height="match_parent"
                 android:id="@+id/reviewsLinearLayout"></LinearLayout>
 
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/reviewList" />
         </LinearLayout>
 
     </LinearLayout>

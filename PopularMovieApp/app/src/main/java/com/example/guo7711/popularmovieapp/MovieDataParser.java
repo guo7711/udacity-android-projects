@@ -36,6 +36,27 @@ public class MovieDataParser {
         return m;
     }
 
+    public static ArrayList<Trailer> getTrailersByMovieID (String MovieID, String responseJsonStr){
+
+        ArrayList<Trailer> trailers = new ArrayList<Trailer>();
+
+        try {
+            JSONArray trailersArray = new JSONObject(responseJsonStr).getJSONArray("results");
+
+            for (int i = 0; i < trailersArray.length(); i++){
+                JSONObject onetrailercontent = trailersArray.getJSONObject(i);
+                String onetrailername = onetrailercontent.getString("name");
+                String onetrailerkey = onetrailercontent.getString("key");
+                trailers.add(new Trailer(onetrailername, onetrailerkey));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return trailers;
+    }
+
     public static ArrayList<String> getReviewsByMovieID(String MovieID, String responseJsonStr){
 
         ArrayList<String> reviews = new ArrayList<>();

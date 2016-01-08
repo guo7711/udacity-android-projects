@@ -13,5 +13,5 @@
     <string name="pref_order_rate">vote_average.desc</string>
     <string name="pref_order_favourite">favourite</string>
     <string name="title_activity_test">Back</string>
-    <string name="apikey">2851e6750aef05c0da1c13d82f597926</string>
+    <string name="apikey"></string>
 </resources>

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -37,6 +38,10 @@ public class MovieFragment extends Fragment {
 
     public MovieFragment() {
 
+    }
+
+    public interface Callback{
+        public void onItemSelected(Uri movieUri);
     }
 
     @Override
@@ -245,6 +250,8 @@ public class MovieFragment extends Fragment {
             return movies;
         }
 
+
+
         @Override
         protected void onPostExecute(ArrayList<Movie> result) {
 
@@ -272,7 +279,7 @@ public class MovieFragment extends Fragment {
                     }
                 });
 
-                Log.e("onPostExecute", String.valueOf(movies.size()));
+              //  Log.e("onPostExecute", String.valueOf(movies.size()));
             }
 
 

@@ -52,18 +52,19 @@ public class DetailActivityFragment extends Fragment {
 
     public Boolean checkFavouriteByID(String MovieID){
 
-        Set<String> retrive_set = new HashSet<String>();
-        retrive_set = sp.getStringSet("favourite", null);
+        Set<String> retrive_set = sp.getStringSet("favourite", null);
 
-        String[] array = new String[retrive_set.size()];
-        retrive_set.toArray(array);
+        if (retrive_set != null) {
+            String[] array = new String[retrive_set.size()];
+            retrive_set.toArray(array);
 
-        if(retrive_set.contains(MovieID)){
-            return true;
+            if (retrive_set.contains(MovieID)) {
+                return true;
+            } else {
+                return false;
+            }
         }
-        else {
-            return false;
-        }
+        else return false;
 
     }
 
@@ -140,8 +141,6 @@ public class DetailActivityFragment extends Fragment {
             });
 
         }
-
-
 
         return rootView;
 

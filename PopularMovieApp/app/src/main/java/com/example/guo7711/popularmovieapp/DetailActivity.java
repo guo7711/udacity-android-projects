@@ -14,11 +14,11 @@ public class DetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if(savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.movie_detail_container, new DetailActivityFragment())
-                    .commit();
-        }
+//        if(savedInstanceState == null){
+//            getSupportFragmentManager().beginTransaction()
+//                    .add(R.id.movie_detail_container, new DetailActivityFragment())
+//                    .commit();
+//        }
 
 
     }

@@ -34,6 +34,7 @@ public class MovieFragment extends Fragment {
     private MovieAdapter movieAdapter;
     private View rootView;
     ArrayList<Movie> movies = new ArrayList<>();
+    String test = "";
 
 
     public MovieFragment() {
@@ -48,6 +49,17 @@ public class MovieFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putString("test", test);
+        outState.putParcelableArrayList("movie", movies);
+        Log.e("onSaveInstanceState", String.valueOf(movies.size()));
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -61,12 +73,6 @@ public class MovieFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onStart() {
-
-        updateMovies(rootView);
-        super.onStart();
-    }
 
     public void updateMovies(View rootView){
         FetchPosterTask movieTask = new FetchPosterTask(getActivity(), rootView);
@@ -81,7 +87,15 @@ public class MovieFragment extends Fragment {
         movieAdapter = new MovieAdapter(getActivity(), movies);
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //Log.e("onCreateView", "MovieFragment");
+        if (savedInstanceState != null) {
+            test = savedInstanceState.getString("test");
+            movies = savedInstanceState.getParcelableArrayList("movie");
+            Log.e("onCreateView", test);
+        }
+        else {
+            updateMovies(rootView);
+        }
+
 
         return rootView;
     }

@@ -1,11 +1,14 @@
 package com.example.guo7711.popularmovieapp;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 
 /**
  * Created by guo7711 on 10/15/2015.
  */
-public class Movie {
+public class Movie implements Parcelable{
 
     String posterURL;
     String id;
@@ -33,4 +36,15 @@ public class Movie {
         trailers = new ArrayList<Trailer>();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
+        dest.writeString(posterURL);
+        dest.writeString(id);
+    }
 }

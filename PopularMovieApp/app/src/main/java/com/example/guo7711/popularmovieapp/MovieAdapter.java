@@ -22,6 +22,7 @@ public class MovieAdapter extends BaseAdapter {
     private ArrayList<Movie> movies;
     private LayoutInflater inflater;
 
+
     public void setMovies(ArrayList<Movie> result)
     {
         movies = result;
@@ -47,6 +48,9 @@ public class MovieAdapter extends BaseAdapter {
 
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
+
+        PosterViewHolder holder = new PosterViewHolder();
+
 
         ImageView imageView;
         if (convertView == null) {

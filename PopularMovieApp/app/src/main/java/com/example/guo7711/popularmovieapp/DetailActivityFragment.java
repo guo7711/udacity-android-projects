@@ -47,7 +47,13 @@ public class DetailActivityFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         sp = getContext().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+        outState.putParcelable("movie", selectedMovie);
+        super.onSaveInstanceState(outState);
     }
 
     public Boolean checkFavouriteByID(String MovieID){
@@ -72,81 +78,134 @@ public class DetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //Log.e("OnCreateView", "OnCreateView");
 
-        reviewTrailerAdapter = new ReviewTrailerAdapter(getActivity(), selectedMovie.reviews);
         rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-        Intent intent = getActivity().getIntent();
+        reviewTrailerAdapter = new ReviewTrailerAdapter(getActivity(), selectedMovie.reviews);
 
+        if (savedInstanceState != null) {
+            selectedMovie = savedInstanceState.getParcelable("movie");
 
-        if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            String selectedMovieID = intent.getStringExtra(Intent.EXTRA_TEXT);
-
-            FetchMovieTask fetchMovieTask = new FetchMovieTask(getActivity(), rootView);
-            fetchMovieTask.execute(selectedMovieID);
-
-            FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity(), rootView);
-            fetchReviewTask.execute(selectedMovieID);
-
-            FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity(), rootView);
-            fetchTrailerTask.execute(selectedMovieID);
-
-            //Log.e("onCreateView", selectedMovie.id);
-            final Button button = (Button) rootView.findViewById(R.id.button);
-
-            if (checkFavouriteByID(selectedMovieID)) {
-               // Log.e("onCreateView", "TRUE");
-                button.setText("Unmark as favourite");
-            }
-            else
-            {
-                //Log.e("onCreateView", "FALSE");
-                button.setText("Mark as favourite");
+            //update UI
+            if (selectedMovie != null) {
+                ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.title);
+                ((TextView) rootView.findViewById(R.id.releasedateText)).setText(selectedMovie.release_date);
+                ((TextView) rootView.findViewById(R.id.voteText)).setText(String.valueOf(selectedMovie.vote_average + "/10"));
+                ((TextView) rootView.findViewById(R.id.overViewText)).setText(selectedMovie.overview);
+                ImageView imageView = ((ImageView) rootView.findViewById(R.id.imageView));
+                Picasso.with(this.getContext()).load("http://image.tmdb.org/t/p/w185/"+ selectedMovie.posterURL).into(imageView);
             }
 
+            //review
+            reviewTrailerAdapter.setReviews(selectedMovie.reviews);
+            reviewTrailerAdapter.notifyDataSetChanged();
 
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            if (selectedMovie.reviews != null) {
+                LinearLayout reviewsLinearLayout = (LinearLayout) rootView.findViewById(R.id.reviewsLinearLayout);
+                for (int i = 0; i < selectedMovie.reviews.size(); i++) {
+                    reviewsLinearLayout.addView(reviewTrailerAdapter.createReview(i));
+                }
+            }
 
-                    if (checkFavouriteByID(selectedMovie.id)) {
+            //trailer
+            reviewTrailerAdapter.setTrailers(selectedMovie.trailers);
+            reviewTrailerAdapter.notifyDataSetChanged();
 
-                        //SharedPreferences sp = getContext().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
+            if (selectedMovie.trailers != null) {
+                LinearLayout trailersLinearLayout = (LinearLayout) rootView.findViewById(R.id.trailersLinearLayout);
+                for (int i = 0; i < selectedMovie.trailers.size(); i++) {
+                    trailersLinearLayout.addView(reviewTrailerAdapter.createTrailer(i));
+                }
+            }
+        }
 
-                        Set<String> set = new HashSet<String>();
-                        set = sp.getStringSet("favourite", null);
-                        set.remove(selectedMovie.id);
-                        editor.putStringSet("favourite", set);
-                        editor.commit();
 
-                        Toast.makeText(getContext(), "Unmarked as favourite!", Toast.LENGTH_SHORT).show();
-                        button.setText("Mark as favourite");
+        else{
+            Intent intent = getActivity().getIntent();
+            if (intent != null && intent.hasExtra("movie")) {
 
-                    } else {
-                        //SharedPreferences sp = getContext().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sp.edit();
+                selectedMovie = intent.getExtras().getParcelable("movie");
 
-                        Set<String> set = new HashSet<String>();
-                        set = sp.getStringSet("favourite", null);
-                        set.add(selectedMovie.id);
-                        editor.putStringSet("favourite", set);
-                        editor.commit();
+                String selectedMovieID = selectedMovie.id;
 
-                        Toast.makeText(getContext(), "Marked as favourite!", Toast.LENGTH_SHORT).show();
-                        button.setText("Unmark as favourite");
-                    }
+                if (selectedMovie != null) {
+                    ((TextView) rootView.findViewById(R.id.titleText)).setText(selectedMovie.title);
+                    ((TextView) rootView.findViewById(R.id.releasedateText)).setText(selectedMovie.release_date);
+                    ((TextView) rootView.findViewById(R.id.voteText)).setText(String.valueOf(selectedMovie.vote_average + "/10"));
+                    ((TextView) rootView.findViewById(R.id.overViewText)).setText(selectedMovie.overview);
+                    ImageView imageView = ((ImageView) rootView.findViewById(R.id.imageView));
+                    Picasso.with(this.getContext()).load("http://image.tmdb.org/t/p/w185/"+ selectedMovie.posterURL).into(imageView);
 
                 }
-            });
+                //FetchMovieTask fetchMovieTask = new FetchMovieTask(getActivity(), rootView);
+                //fetchMovieTask.execute(selectedMovieID);
 
+                FetchReviewTask fetchReviewTask = new FetchReviewTask(getActivity(), rootView);
+                fetchReviewTask.execute(selectedMovieID);
+
+                FetchTrailerTask fetchTrailerTask = new FetchTrailerTask(getActivity(), rootView);
+                fetchTrailerTask.execute(selectedMovieID);
+
+                //Log.e("onCreateView", selectedMovie.id);
+
+
+            }
         }
+
+
+
+        final Button button = (Button) rootView.findViewById(R.id.button);
+
+        if (checkFavouriteByID(selectedMovie.id)) {
+            // Log.e("onCreateView", "TRUE");
+            button.setText("Unmark as favourite");
+        }
+        else
+        {
+            //Log.e("onCreateView", "FALSE");
+            button.setText("Mark as favourite");
+        }
+
+
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (checkFavouriteByID(selectedMovie.id)) {
+
+                    //SharedPreferences sp = getContext().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+
+                    Set<String> set = new HashSet<String>();
+                    set = sp.getStringSet("favourite", null);
+                    set.remove(selectedMovie.id);
+                    editor.putStringSet("favourite", set);
+                    editor.commit();
+
+                    Toast.makeText(getContext(), "Unmarked as favourite!", Toast.LENGTH_SHORT).show();
+                    button.setText("Mark as favourite");
+
+                } else {
+                    //SharedPreferences sp = getContext().getSharedPreferences("pref_general", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sp.edit();
+
+                    Set<String> set = new HashSet<String>();
+                    set = sp.getStringSet("favourite", null);
+                    set.add(selectedMovie.id);
+                    editor.putStringSet("favourite", set);
+                    editor.commit();
+
+                    Toast.makeText(getContext(), "Marked as favourite!", Toast.LENGTH_SHORT).show();
+                    button.setText("Unmark as favourite");
+                }
+
+            }
+        });
+
+
 
         return rootView;
 
     }
-
-
 
 
     public class FetchTrailerTask extends AsyncTask<String, Void, ArrayList<Trailer>> {
@@ -240,7 +299,7 @@ public class DetailActivityFragment extends Fragment {
             }
 
 
-            if (selectedMovie.reviews != null) {
+            if (selectedMovie.trailers != null) {
                 //ListView reviewListView = (ListView) rootView.findViewById(R.id.reviewList);
                 //reviewListView.setAdapter(reviewTrailerAdapter);
 
@@ -252,7 +311,7 @@ public class DetailActivityFragment extends Fragment {
                 super.onPostExecute(result_trailers);
             }
 
-            // Log.e("FetchReviewTask", String.valueOf(selectedMovie.reviews.size()));
+
         }
     }
 
@@ -359,11 +418,9 @@ public class DetailActivityFragment extends Fragment {
 
                 super.onPostExecute(result_reviews);
             }
-
-           // Log.e("FetchReviewTask", String.valueOf(selectedMovie.reviews.size()));
         }
     }
-
+/*
     public class FetchMovieTask extends AsyncTask<String, Void, Movie> {
 
         private Context mContext;
@@ -466,4 +523,6 @@ public class DetailActivityFragment extends Fragment {
 
         }
     }
+
+    */
 }

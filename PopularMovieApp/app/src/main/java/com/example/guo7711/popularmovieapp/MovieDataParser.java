@@ -108,12 +108,22 @@ public class MovieDataParser {
                 onemovie = movies.getJSONObject(i);
                 String posterpath = "http://image.tmdb.org/t/p/w185/" + onemovie.getString("poster_path");
                 String id = onemovie.getString("id");
+                String overview = onemovie.getString("overview");
+                String title = onemovie.getString("title");
+                String date = onemovie.getString("release_date");
+                Double vote = onemovie.getDouble("vote_average");
+
 
                 Movie movieObj = new Movie(id);
                 movieObj.posterURL = posterpath;
+                movieObj.overview = overview;
+                movieObj.title = title;
+                movieObj.release_date = date;
+                movieObj.vote_average = vote;
+
 
                 movieArray.add(movieObj);
-                //Log.d("PosterURL", posterpath);
+
             }
 
 

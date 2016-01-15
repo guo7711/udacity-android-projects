@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -41,34 +40,28 @@ public class MovieFragment extends Fragment {
 
     }
 
-    public interface Callback{
-        public void onItemSelected(Uri movieUri);
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
 
-        outState.putString("test", test);
         outState.putParcelableArrayList("movie", movies);
-        Log.e("onSaveInstanceState", String.valueOf(movies.size()));
         super.onSaveInstanceState(outState);
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_settings)
         {
-           Intent intent = new Intent(getActivity(), SettingsActivity.class);
-            startActivity(intent);
+           Intent intent = new Intent(getActivity(), SettingsActivity.class);startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -88,9 +81,31 @@ public class MovieFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         if (savedInstanceState != null) {
-            test = savedInstanceState.getString("test");
             movies = savedInstanceState.getParcelableArrayList("movie");
-            Log.e("onCreateView", test);
+
+            // update UI
+            movieAdapter.setMovies(movies);
+            movieAdapter.notifyDataSetChanged();
+
+            if (movies != null)
+            {
+                GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
+                gridView.setAdapter(movieAdapter);
+
+                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View v,
+                                            int position, long id) {
+                        // Toast.makeText(getActivity(), "" + position,
+                        //       Toast.LENGTH_SHORT).show();
+                        String selectedMovieID = (movies.get(position)).id;
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        intent.putExtra("movie", movies.get(position));
+                        startActivity(intent);
+
+                    }
+                });
+
+            }
         }
         else {
             updateMovies(rootView);
@@ -287,7 +302,8 @@ public class MovieFragment extends Fragment {
                         // Toast.makeText(getActivity(), "" + position,
                         //       Toast.LENGTH_SHORT).show();
                         String selectedMovieID = (movies.get(position)).id;
-                        Intent intent = new Intent(getActivity(), DetailActivity.class).putExtra(Intent.EXTRA_TEXT, selectedMovieID);
+                        Intent intent = new Intent(getActivity(), DetailActivity.class);
+                        intent.putExtra("movie", movies.get(position));
                         startActivity(intent);
 
                     }

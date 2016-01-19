@@ -2,9 +2,10 @@ package com.example.guo7711.popularmovieapp;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMovieSelectedCallback{
 
     Boolean mTwoPane = false;
 
@@ -14,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (findViewById(R.id.movie_detail_container) != null){
             mTwoPane = true;
+            Log.e("onCreate", "Tablet found");
 
             if (savedInstanceState == null){
                 getSupportFragmentManager().beginTransaction()
@@ -22,9 +24,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else {
+            Log.e("onCreate", "Phone found");
             mTwoPane = false;
-            setContentView(R.layout.activity_main);
+
         }
+        setContentView(R.layout.activity_main);
+
 
     }
 
@@ -32,6 +37,11 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+}
+
+    @Override
+    public void onMovieSelected() {
+
     }
 }
 

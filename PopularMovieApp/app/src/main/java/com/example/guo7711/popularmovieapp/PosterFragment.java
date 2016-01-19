@@ -28,15 +28,14 @@ import java.util.Set;
 /**
  * Created by guo7711 on 10/15/2015.
  */
-public class MovieFragment extends Fragment {
+public class PosterFragment extends Fragment {
 
-    private MovieAdapter movieAdapter;
+    private PosterAdapter posterAdapter;
     private View rootView;
     ArrayList<Movie> movies = new ArrayList<>();
-    String test = "";
 
 
-    public MovieFragment() {
+    public PosterFragment() {
 
     }
 
@@ -77,45 +76,58 @@ public class MovieFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        movieAdapter = new MovieAdapter(getActivity(), movies);
+        posterAdapter = new PosterAdapter(getActivity(), movies);
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        if (savedInstanceState != null) {
-            movies = savedInstanceState.getParcelableArrayList("movie");
+    /*    ConnectivityManager cm =
+                (ConnectivityManager)(getActivity().getSystemService(Context.CONNECTIVITY_SERVICE));
 
-            // update UI
-            movieAdapter.setMovies(movies);
-            movieAdapter.notifyDataSetChanged();
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();*/
 
-            if (movies != null)
-            {
-                GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
-                gridView.setAdapter(movieAdapter);
+//        if (!isConnected) {
+//            Toast toast = Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT);
+//            toast.show();
+//        }
+//        else {
 
-                gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    public void onItemClick(AdapterView<?> parent, View v,
-                                            int position, long id) {
-                        // Toast.makeText(getActivity(), "" + position,
-                        //       Toast.LENGTH_SHORT).show();
-                        String selectedMovieID = (movies.get(position)).id;
-                        Intent intent = new Intent(getActivity(), DetailActivity.class);
-                        intent.putExtra("movie", movies.get(position));
-                        startActivity(intent);
+            if (savedInstanceState != null) {
+                movies = savedInstanceState.getParcelableArrayList("movie");
 
-                    }
-                });
+                // update UI
+                posterAdapter.setMovies(movies);
+                posterAdapter.notifyDataSetChanged();
 
+                if (movies != null) {
+                    GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
+                    gridView.setAdapter(posterAdapter);
+
+                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        public void onItemClick(AdapterView<?> parent, View v,
+                                                int position, long id) {
+                            // Toast.makeText(getActivity(), "" + position,
+                            //       Toast.LENGTH_SHORT).show();
+                            String selectedMovieID = (movies.get(position)).id;
+                            Intent intent = new Intent(getActivity(), DetailActivity.class);
+                            intent.putExtra("movie", movies.get(position));
+                            startActivity(intent);
+
+                        }
+                    });
+
+                }
+            } else {
+                updateMovies(rootView);
             }
-        }
-        else {
-            updateMovies(rootView);
-        }
+       // }
 
 
         return rootView;
     }
 
-    public class FetchPosterTask extends AsyncTask<String, Void, ArrayList<Movie>> {
+
+     class FetchPosterTask extends AsyncTask<String, Void, ArrayList<Movie>> {
 
         private Context mContext;
         private View rootView;
@@ -135,8 +147,6 @@ public class MovieFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String responseJsonStr = null;
             String order_by = params[0];
-
-            //Log.e("FetchPoster", params[0]);
 
             if (order_by.equals("favourite")) {
 
@@ -161,7 +171,7 @@ public class MovieFragment extends Fragment {
                         //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
 
 
-                        URL url = new URL("http://api.themoviedb.org/3/movie/"+array[i]+"?api_key=" + getResources().getString(R.string.apikey));
+                        URL url = new URL("http://api.themoviedb.org/3/movie/"+array[i]+"?api_key=" + mContext.getResources().getString(R.string.apikey));
 
                         // Create the request to OpenWeatherMap, and open the connection
                         urlConnection = (HttpURLConnection) url.openConnection();
@@ -197,7 +207,7 @@ public class MovieFragment extends Fragment {
                         movies.add(m);
 
                     } catch (IOException e) {
-                        Log.e("MovieFragment", "Error " + e.getMessage());
+                        Log.e("PosterFragment", "Error " + e.getMessage());
                         // If the code didn't successfully get the movie data, there's no point in attemping
                         // to parse it.
                         return null;
@@ -209,7 +219,7 @@ public class MovieFragment extends Fragment {
                             try {
                                 reader.close();
                             } catch (final IOException e) {
-                                Log.e("MovieFragment", "Error closing stream", e);
+                                Log.e("PosterFragment", "Error closing stream", e);
                             }
                         }
                     }
@@ -224,7 +234,7 @@ public class MovieFragment extends Fragment {
                     //http://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=[YOUR API KEY]
 
 
-                    URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=" + order_by + "&api_key=" + getResources().getString(R.string.apikey));
+                    URL url = new URL("http://api.themoviedb.org/3/discover/movie?sort_by=" + order_by + "&api_key=" + mContext.getResources().getString(R.string.apikey));
 
                     // Create the request to OpenWeatherMap, and open the connection
                     urlConnection = (HttpURLConnection) url.openConnection();
@@ -259,7 +269,7 @@ public class MovieFragment extends Fragment {
                     movies = MovieDataParser.getMovies(responseJsonStr);
 
                 } catch (IOException e) {
-                    Log.e("MovieFragment", "Error " + e.getMessage());
+                    Log.e("PosterFragment", "Error " + e.getMessage());
                     // If the code didn't successfully get the movie data, there's no point in attemping
                     // to parse it.
                     return null;
@@ -271,7 +281,7 @@ public class MovieFragment extends Fragment {
                         try {
                             reader.close();
                         } catch (final IOException e) {
-                            Log.e("MovieFragment", "Error closing stream", e);
+                            Log.e("PosterFragment", "Error closing stream", e);
                         }
                     }
                 }
@@ -285,8 +295,8 @@ public class MovieFragment extends Fragment {
         protected void onPostExecute(ArrayList<Movie> result) {
 
             if (result != null) {
-                movieAdapter.setMovies(result);
-                movieAdapter.notifyDataSetChanged();
+                posterAdapter.setMovies(result);
+                posterAdapter.notifyDataSetChanged();
                 movies = result;
             }
 
@@ -294,7 +304,7 @@ public class MovieFragment extends Fragment {
             if (movies != null)
             {
                 GridView gridView = (GridView) rootView.findViewById(R.id.movie_grid);
-                gridView.setAdapter(movieAdapter);
+                gridView.setAdapter(posterAdapter);
 
                 gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView<?> parent, View v,
@@ -309,7 +319,7 @@ public class MovieFragment extends Fragment {
                     }
                 });
 
-              //  Log.e("onPostExecute", String.valueOf(movies.size()));
+                //  Log.e("onPostExecute", String.valueOf(movies.size()));
             }
 
 
@@ -318,4 +328,6 @@ public class MovieFragment extends Fragment {
 
 
     }
+
+
 }

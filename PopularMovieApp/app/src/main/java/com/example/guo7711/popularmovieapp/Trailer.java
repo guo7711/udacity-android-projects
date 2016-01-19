@@ -16,11 +16,11 @@ public class Trailer implements Parcelable {
         this.key = key;
     }
 
-
     protected Trailer (Parcel in) {
         name = in.readString();
         key = in.readString();
     }
+
     public static final Creator<Trailer> CREATOR = new Creator<Trailer>() {
         @Override
         public Trailer createFromParcel(Parcel in) {
@@ -31,6 +31,8 @@ public class Trailer implements Parcelable {
         public Trailer[] newArray(int size) {
             return new Trailer[size];
         }
+
+
     };
 
 

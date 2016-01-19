@@ -11,7 +11,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
         if (findViewById(R.id.movie_detail_container) != null){
             mTwoPane = true;
@@ -24,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else {
             mTwoPane = false;
+            setContentView(R.layout.activity_main);
         }
 
     }

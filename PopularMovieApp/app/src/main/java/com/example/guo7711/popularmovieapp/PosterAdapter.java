@@ -16,7 +16,7 @@ import java.util.ArrayList;
 /**
  * Created by guo7711 on 10/15/2015.
  */
-public class MovieAdapter extends BaseAdapter {
+public class PosterAdapter extends BaseAdapter {
 
     private Context mContext;
     private ArrayList<Movie> movies;
@@ -28,7 +28,7 @@ public class MovieAdapter extends BaseAdapter {
         movies = result;
     }
 
-    public MovieAdapter(Context c, ArrayList<Movie> list) {
+    public PosterAdapter(Context c, ArrayList<Movie> list) {
         mContext = c;
         movies = list;
         inflater = LayoutInflater.from(mContext);
@@ -49,23 +49,29 @@ public class MovieAdapter extends BaseAdapter {
     // create a new ImageView for each item referenced by the Adapter
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        PosterViewHolder holder = new PosterViewHolder();
-
-
-        ImageView imageView;
+        PosterViewHolder holder;
+        holder = new PosterViewHolder();
+        //ImageView imageView;
         if (convertView == null) {
             // if it's not recycled, initialize some attributes
+            holder.imageView = new ImageView(mContext);
+            holder.imageView.setLayoutParams(new GridView.LayoutParams(540, 810));
+            holder.imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            holder.imageView.setPadding(0, 0, 0, 0);
+
+            /*
             imageView = new ImageView(mContext);
             imageView.setLayoutParams(new GridView.LayoutParams(540, 810));
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setPadding(0, 0, 0, 0);
+            imageView.setPadding(0, 0, 0, 0);*/
         } else {
-            imageView = (ImageView) convertView;
+            holder.imageView = (ImageView) convertView;
         }
 
-        Picasso.with(mContext).load(movies.get(position).posterURL).into(imageView);
-        //Log.e("MovieAdapter",String.valueOf(movies.size()));
-        return imageView;
+        Picasso.with(mContext).load(movies.get(position).posterURL).into(holder.imageView);
+        //Picasso.with(mContext).load(movies.get(position).posterURL).into(imageView);
+        //Log.e("PosterAdapter",String.valueOf(movies.size()));
+        return holder.imageView;
 
 
     }

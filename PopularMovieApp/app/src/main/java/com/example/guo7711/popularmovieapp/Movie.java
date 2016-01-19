@@ -70,13 +70,17 @@ public class Movie implements Parcelable{
         dest.writeDouble(vote_average);
         dest.writeString(overview);
 
-        String[] reviewArray = new String[reviews.size()];
-        reviewArray = reviews.toArray(reviewArray);
-        dest.writeStringArray(reviewArray);
+        if (reviews != null) {
+            String[] reviewArray = new String[reviews.size()];
+            reviewArray = reviews.toArray(reviewArray);
+            dest.writeStringArray(reviewArray);
+        }
 
-        Trailer[] trailerArray = new Trailer[trailers.size()];
-        trailerArray = trailers.toArray(trailerArray);
-        dest.writeParcelableArray(trailerArray, flags);
+        if (trailers != null) {
+            Trailer[] trailerArray = new Trailer[trailers.size()];
+            trailerArray = trailers.toArray(trailerArray);
+            dest.writeParcelableArray(trailerArray, flags);
+        }
 
 
     }

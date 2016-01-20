@@ -4,6 +4,8 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -14,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -79,18 +82,19 @@ public class PosterFragment extends Fragment {
         posterAdapter = new PosterAdapter(getActivity(), movies);
         rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-    /*    ConnectivityManager cm =
+        ConnectivityManager cm =
                 (ConnectivityManager)(getActivity().getSystemService(Context.CONNECTIVITY_SERVICE));
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();*/
+                activeNetwork.isConnectedOrConnecting();
 
-//        if (!isConnected) {
-//            Toast toast = Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT);
-//            toast.show();
-//        }
-//        else {
+
+        if (!isConnected) {
+            Toast toast = Toast.makeText(getActivity(), "No Internet Connection", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+        else {
 
             if (savedInstanceState != null) {
                 movies = savedInstanceState.getParcelableArrayList("movie");
@@ -120,7 +124,7 @@ public class PosterFragment extends Fragment {
             } else {
                 updateMovies(rootView);
             }
-       // }
+        }
 
 
         return rootView;
